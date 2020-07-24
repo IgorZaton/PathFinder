@@ -1,0 +1,66 @@
+<BackgroundColor@Widget>
+    background_color: 1, 1, 1, 1
+    canvas.before:
+        Color:
+            rgba: root.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<BackgroundLabel@Label+BackgroundColor>
+    background_color: 0, 0, 0, 0
+
+<Menu>:
+    GridLayout: #upper window
+        rows:   2
+        size:   root.width, root.height
+        BackgroundLabel:  #title
+            text:   "PATHFINDER"
+            font_size:  40
+            italic: True
+            bold:   True
+            background_color:   0.3, 0.1, 0.3, 1
+
+        GridLayout: #menu
+            cols:   3
+
+            GridLayout: #algorithm selection
+                rows:   2
+
+                Label:
+                    text:   "ALGORITHM"
+
+                GridLayout:
+                    cols:   2
+
+                    Button:
+                        text:   "prev"
+
+                    Button:
+                        text:   "next"
+
+            GridLayout: #blocks selection
+                cols:   2
+                rows:   2
+                Button:
+                    text:   "start point"
+                    on_press:   app.start_point()
+                Button:
+                    text:   "stop point"
+                    on_press:   app.stop_point()
+                Button:
+                    text:   "wall"
+                    on_press:   app.wall()
+                Button:
+                    text:   "rubber"
+                    on_press:   app.rubber()
+
+            GridLayout: #start/stop
+                cols:   2
+                Button:
+                    text:   "start"
+                    on_release:   app.start()
+                Button:
+                    text:   "clear"
+                    on_press:   app.clear()
+
