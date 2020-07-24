@@ -26,6 +26,10 @@ class Paint(Widget):
             d = 10.
             if touch.y > self.height:
                 Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
+                if self.color == (0.3, 1, 1):
+                    self.starting_point = (touch.x, touch.y)
+                elif self.color == (1, 1, 1):
+                    self.goal_point = (touch.x, touch.y)
                 touch.ud['line'] = Line(points=[touch.x, touch.y], width=5)
             else:
                 pass
@@ -48,12 +52,22 @@ class MainApp(App):
         return layout
 
     def clear(self):
+        if hasattr(self.paint, 'starting_point'):
+            delattr(self.paint, 'starting_point')
+        if hasattr(self.paint, 'goal_point'):
+            delattr(self.paint, 'goal_point')
         self.paint.canvas.clear()
 
     def start(self):
-        self.paint.export_to_png(filename="drw.png")
-        data_matrix = image_to_rgb_matrix("drw.png", delete_a_in_rgba=True)
-        print("hi")
+        if hasattr(self.paint, 'starting_point') and hasattr(self.paint, 'goal_point'):
+            self.paint.export_to_png(filename="drw.png")
+            data_matrix = image_to_rgb_matrix("drw.png", delete_a_in_rgba=True)
+
+
+        else:
+            print("We dont do that here")
+            pass
+
 
 
     def wall(self):
