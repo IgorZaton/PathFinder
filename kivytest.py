@@ -6,7 +6,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.graphics import Color, Ellipse, Line, Rectangle
 from random import random
 from kivy.core.window import Window
-from image_to_rgb_matrix import image_to_rgb_matrix
+from pathfinding_algorithms import image_to_matrix
 
 
 class Menu(Widget):
@@ -61,7 +61,8 @@ class MainApp(App):
     def start(self):
         if hasattr(self.paint, 'starting_point') and hasattr(self.paint, 'goal_point'):
             self.paint.export_to_png(filename="drw.png")
-            data_matrix = image_to_rgb_matrix("drw.png", delete_a_in_rgba=True)
+            data_matrix = image_to_matrix("drw.png", add_cost_matrix=True)
+            pass
 
 
         else:
