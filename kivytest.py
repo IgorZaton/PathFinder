@@ -6,7 +6,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.graphics import Color, Ellipse, Line, Rectangle
 from random import random
 from kivy.core.window import Window
-from pathfinding_algorithms import image_to_matrix
+import pathfinding_algorithms as pa
+from PIL import Image
 
 
 class Menu(Widget):
@@ -27,9 +28,9 @@ class Paint(Widget):
             if touch.y > self.height:
                 Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
                 if self.color == (0.3, 1, 1):
-                    self.starting_point = (touch.x, touch.y)
+                    self.starting_point = (touch.x, self.height-(touch.y-self.height))
                 elif self.color == (1, 1, 1):
-                    self.goal_point = (touch.x, touch.y)
+                    self.goal_point = (touch.x, self.height-(touch.y-self.height)) #so it would later match with data_matrix
                 touch.ud['line'] = Line(points=[touch.x, touch.y], width=5)
             else:
                 pass
@@ -61,7 +62,11 @@ class MainApp(App):
     def start(self):
         if hasattr(self.paint, 'starting_point') and hasattr(self.paint, 'goal_point'):
             self.paint.export_to_png(filename="drw.png")
-            data_matrix = image_to_matrix("drw.png", add_cost_matrix=True)
+            data_matrix = pa.image_to_matrix("drw.png", delete_a_in_rgba=True)
+            self.path = pa.dijkstra(data_matrix, self.paint.starting_point, self.paint.goal_point)
+            data_matrix = pa.paint_path(data_matrix, self.path)
+            img = Image.fromarray(data_matrix)
+            img.save('sol.png')
             pass
 
 
