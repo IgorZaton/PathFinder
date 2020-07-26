@@ -64,16 +64,14 @@ def find_neighbour_nodes(data_matrix, coordinates):
         neighbour_nodes.append(data_matrix[x - 1][y])
     if x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y].processed:
         neighbour_nodes.append(data_matrix[x + 1][y])
-    '''
     if y < data_matrix.shape[1] - 1 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y + 1].processed:
         neighbour_nodes.append(data_matrix[x + 1][y + 1])
-    if y > 0 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y].processed:
+    if y > 0 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y - 1].processed:
         neighbour_nodes.append(data_matrix[x + 1][y - 1])
-    if y < data_matrix.shape[1] - 1 and x > 0 and not data_matrix[x + 1][y].processed:
+    if y < data_matrix.shape[1] - 1 and x > 0 and not data_matrix[x - 1][y + 1].processed:
         neighbour_nodes.append(data_matrix[x - 1][y + 1])
     if y > 0 and x > 0 and data_matrix[x - 1][y - 1].processed:
         neighbour_nodes.append(data_matrix[x - 1][y - 1])
-    '''
 
     return neighbour_nodes
 
