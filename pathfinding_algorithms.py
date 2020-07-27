@@ -2,22 +2,6 @@ import math
 from PIL import Image
 from numpy import asarray, delete, zeros, full
 
-'''
-def image_to_matrix(image_name, add_cost_matrix=False, cost_val=255, delete_a_in_rgba=False):
-    img = Image.open(image_name)
-    data_matrix = asarray(img)
-    data_matrix.setflags(write=1)
-    if data_matrix.shape[2] == 4 and add_cost_matrix:
-        for i in range(data_matrix.shape[0]):
-            for j in range(data_matrix.shape[1]):
-                data_matrix[i][j][3] = cost_val
-    if data_matrix.shape[2] == 4 and delete_a_in_rgba and add_cost_matrix==False:
-        data_matrix = delete(data_matrix, 3, 2)
-        return data_matrix
-    else:
-        return data_matrix
-'''
-
 
 def image_to_matrix(image_name, delete_a_in_rgba=False):
     img = Image.open(image_name)
@@ -50,7 +34,7 @@ class Node:
         self.index_in_queue = None
 
 
-def find_neighbour_nodes(data_matrix, coordinates):
+def find_neighbour_nodes(data_matrix, coordinates, diagonal_nodes=False):
 
     neighbour_nodes = []
     y = coordinates[1]
@@ -64,14 +48,15 @@ def find_neighbour_nodes(data_matrix, coordinates):
         neighbour_nodes.append(data_matrix[x - 1][y])
     if x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y].processed:
         neighbour_nodes.append(data_matrix[x + 1][y])
-    if y < data_matrix.shape[1] - 1 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y + 1].processed:
-        neighbour_nodes.append(data_matrix[x + 1][y + 1])
-    if y > 0 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y - 1].processed:
-        neighbour_nodes.append(data_matrix[x + 1][y - 1])
-    if y < data_matrix.shape[1] - 1 and x > 0 and not data_matrix[x - 1][y + 1].processed:
-        neighbour_nodes.append(data_matrix[x - 1][y + 1])
-    if y > 0 and x > 0 and data_matrix[x - 1][y - 1].processed:
-        neighbour_nodes.append(data_matrix[x - 1][y - 1])
+    if diagonal_nodes:
+        if y < data_matrix.shape[1] - 1 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y + 1].processed:
+            neighbour_nodes.append(data_matrix[x + 1][y + 1])
+        if y > 0 and x < data_matrix.shape[0] - 1 and not data_matrix[x + 1][y - 1].processed:
+            neighbour_nodes.append(data_matrix[x + 1][y - 1])
+        if y < data_matrix.shape[1] - 1 and x > 0 and not data_matrix[x - 1][y + 1].processed:
+            neighbour_nodes.append(data_matrix[x - 1][y + 1])
+        if y > 0 and x > 0 and data_matrix[x - 1][y - 1].processed:
+            neighbour_nodes.append(data_matrix[x - 1][y - 1])
 
     return neighbour_nodes
 
@@ -117,7 +102,7 @@ def get_distance(img, u, v):
                 float(img[v][2]) - float(img[u][2])) ** 2
 
 
-def dijkstra(data_matrix, start, end):
+def dijkstra(data_matrix, start, end, diagonal_move=False):
 
     priority_queue = []
     start_x = int(start[0])
@@ -145,7 +130,7 @@ def dijkstra(data_matrix, start, end):
         priority_queue[0].index_in_queue = 0
         priority_queue.pop()
         priority_queue = bubble_down(priority_queue, 0)
-        neighbors = find_neighbour_nodes(matrix, (u.y, u.x))
+        neighbors = find_neighbour_nodes(matrix, (u.y, u.x), diagonal_move)
         for v in neighbors:
             dist = get_distance(data_matrix, (u.y, u.x), (v.y, v.x))
             if u.d + dist < v.d:
@@ -166,10 +151,9 @@ def dijkstra(data_matrix, start, end):
     path.append((start_x, start_y))
     return path
 
+
 def paint_path(data_matrix, path):
 
     for i in range(len(path)):
         data_matrix[path[i][1]][path[i][0]] = (0, 0, 255)
     return data_matrix
-
-    

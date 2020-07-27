@@ -11,6 +11,14 @@
     background_color: 0, 0, 0, 0
 
 <Menu>:
+
+    algorithm: alg_label
+    start_button: start_button
+    stop_button: stop_button
+    wall_button: wall_button
+    rubber_button: rubber_button
+    diagonal_move_btn: diagonal_move_btn
+
     GridLayout: #upper window
         rows:   2
         size:   root.width, root.height
@@ -28,39 +36,58 @@
                 rows:   2
 
                 Label:
-                    text:   "ALGORITHM"
+                    id: alg_label
+                    text: "none"
 
                 GridLayout:
-                    cols:   2
+                    cols:   3
 
                     Button:
                         text:   "prev"
+                        on_press:   app.prev()
 
                     Button:
                         text:   "next"
+                        on_press:   app.next()
+
+                    Button:
+                        id: diagonal_move_btn
+                        text:   "diagonal move"
+                        multiline:  True
+                        on_press:   app.diagonal_move()
 
             GridLayout: #blocks selection
                 cols:   2
                 rows:   2
                 Button:
+                    id: start_button
                     text:   "start point"
                     on_press:   app.start_point()
                 Button:
+                    id: stop_button
                     text:   "stop point"
                     on_press:   app.stop_point()
                 Button:
+                    id: wall_button
                     text:   "wall"
                     on_press:   app.wall()
                 Button:
+                    id: rubber_button
                     text:   "rubber"
                     on_press:   app.rubber()
 
             GridLayout: #start/stop
-                cols:   2
+
+                rows:2
+                GridLayout:
+                    cols:   2
+                    Button:
+                        text:   "start"
+                        on_release:   app.start()
+                    Button:
+                        text:   "clear"
+                        on_press:   app.clear()
                 Button:
-                    text:   "start"
-                    on_release:   app.start()
-                Button:
-                    text:   "clear"
-                    on_press:   app.clear()
+                    text:   "exit"
+                    on_press:   app.exit()
 
