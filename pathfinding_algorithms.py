@@ -1,6 +1,6 @@
 import math
 from PIL import Image
-from numpy import asarray, delete, zeros, full
+from numpy import asarray, delete, zeros, full, array
 
 
 def image_to_matrix(image_name, delete_a_in_rgba=False):
@@ -35,7 +35,6 @@ class Node:
 
 
 def find_neighbour_nodes(data_matrix, coordinates, diagonal_nodes=False):
-
     neighbour_nodes = []
     y = coordinates[1]
     x = coordinates[0]
@@ -97,13 +96,23 @@ def bubble_down(queue, index):
     return queue
 
 
-def get_distance(img, u, v):
+def get_distance(img, u, v, diagonal_move=False):
+    '''
     return 0.1 + (float(img[v][0]) - float(img[u][0])) ** 2 + (float(img[v][1]) - float(img[u][1])) ** 2 + (
                 float(img[v][2]) - float(img[u][2])) ** 2
+    '''
+    wall = array([255, 255, 255])
+    if diagonal_move:
+        if ((u[0] == v[0]+1 and u[1] == v[1]+1) or (u[0] == v[0]-1 and u[1] == v[1]-1) or (u[0] == v[0]-1 and u[1] == v[1]+1) or (u[0] == v[0]+1 and u[1] == v[1]-1)) and (img[v].all() != wall.all()):
+            return 1.41
+    if (u[0] == v[0] + 1 or u[0] == v[0] - 1 or u[1] == v[1] + 1 or u[1] == v[1] - 1) and (img[v].all() != wall.all()):
+        return 1
+    elif img[v].all() == wall.all():
+        return 9999
+
 
 
 def dijkstra(data_matrix, start, end, diagonal_move=False):
-
     priority_queue = []
     start_x = int(start[0])
     start_y = int(start[1])
@@ -132,7 +141,7 @@ def dijkstra(data_matrix, start, end, diagonal_move=False):
         priority_queue = bubble_down(priority_queue, 0)
         neighbors = find_neighbour_nodes(matrix, (u.y, u.x), diagonal_move)
         for v in neighbors:
-            dist = get_distance(data_matrix, (u.y, u.x), (v.y, v.x))
+            dist = get_distance(data_matrix, (u.y, u.x), (v.y, v.x), diagonal_move)
             if u.d + dist < v.d:
                 v.d = u.d + dist
                 v.parent_x = u.x
@@ -153,7 +162,6 @@ def dijkstra(data_matrix, start, end, diagonal_move=False):
 
 
 def paint_path(data_matrix, path):
-
     for i in range(len(path)):
         data_matrix[path[i][1]][path[i][0]] = (0, 0, 255)
     return data_matrix
