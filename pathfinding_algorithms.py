@@ -108,9 +108,7 @@ def get_distance(img, u, v, diagonal_move=False):
     if (u[0] == v[0] + 1 or u[0] == v[0] - 1 or u[1] == v[1] + 1 or u[1] == v[1] - 1) and (img[v].all() != wall.all()):
         return 1
     elif img[v].all() == wall.all():
-        return 9999
-
-
+        return math.inf
 
 def dijkstra(data_matrix, start, end, diagonal_move=False):
     priority_queue = []
@@ -165,3 +163,63 @@ def paint_path(data_matrix, path):
     for i in range(len(path)):
         data_matrix[path[i][1]][path[i][0]] = (0, 0, 255)
     return data_matrix
+
+#*********ASTAR*********
+
+class AstarNode():
+    def __init__(self, coord, end):
+        self.x = coord[0]
+        self.y = coord[1]
+        self.parent_x = None
+        self.parent_y = None
+        self.h = self.heuristic_cost(end)
+        self.g = 0
+        self.f = self.h + self.g
+        self.explored = False
+
+    def set_h(self, h):
+        self.h = h
+
+    def set_g(self, g):
+        self.g = g
+
+    def get_f(self):
+        return self.f
+
+    def get_g(self):
+        return self.g
+
+    def get_h(self):
+        return self.h
+
+    def get_coord(self):
+        return (self.x, self.y)
+
+    def heuristic_cost(self, end):
+        cost_x = abs(self.x - end[0])
+        cost_y = abs(self.y - end[1])
+        return math.sqrt(cost_x**2 + cost_y**2)
+
+
+
+def astar(data_matrix, start, end, diagonal_move=False):
+
+    open = []   #visited but not explored
+    close = []  #visited and explored
+
+    node_start = AstarNode(coord=start, end=end)
+    open.append(node_start)
+
+    while len(open) > 0:
+        open.sort(key=AstarNode.get_f)
+        node_current = open.pop()
+
+        if node_current.get_coord() == end:
+            break
+
+        neighbours = find_neighbour_nodes(data_matrix, node_current.get_coord(), diagonal_move)
+        for n in neighbours:
+
+
+
+

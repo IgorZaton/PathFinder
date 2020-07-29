@@ -2,6 +2,8 @@ from array import array
 
 from kivy.app import App
 from functools import partial
+
+from kivy.atlas import CoreImage
 from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
@@ -62,24 +64,10 @@ class Paint(Widget):
 
     def paint_solution(self, img):
         self.canvas.clear()
-        '''
-        txtr = texture.Texture.create(size=(int(img.shape[0]), int(img.shape[1])))
-        size = int(img.shape[0]) * int(img.shape[1]) * 3
-        buf = [int(x * 255 / size) for x in range(size)]
-        # initialize the array with the buffer values
-        arr = array('B', buf)
-        for i in range(int(img.shape[0])):
-            for j in range(int(img.shape[1])):
-                for k in range(int(img.shape[2])):
-                    arr[i+j+k]=img[i][j][k]
-        txtr.blit_buffer(arr, colorfmt='rgb', bufferfmt='ubyte')
-        
-        '''
         with self.canvas:
-            #sol = Image(source=img)
-            #sol.reload()
-            #Cache.remove("kv.image", img)
-            Rectangle(source=img, pos=self.pos, size=self.size)
+            sol = Image(source=img)
+            sol.reload()
+            Rectangle(texture=sol.texture, pos=self.pos, size=self.size)
 
 
 class MainApp(App):
