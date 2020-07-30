@@ -30,7 +30,7 @@ class Menu(Widget):
     rubber_button = ObjectProperty(None)
     diagonal_move_btn = ObjectProperty(None)
     diagonal_move = False
-    alg_list = ["Dijkstra", "A*"]
+    alg_list = ["Dijkstra"]#, "A*"]
     list_idx = 0
 
     def __init__(self, **kwargs):
@@ -53,9 +53,9 @@ class Paint(Widget):
             if touch.y > self.height:
                 Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
                 if self.color == (0.3, 1, 1):
-                    self.starting_point = (touch.x, self.height-(touch.y-self.height))
+                    self.starting_point = (int(touch.x), int(self.height-(touch.y-self.height)))
                 elif self.color == (1, 1, 1):
-                    self.goal_point = (touch.x, self.height-(touch.y-self.height)) #so it would later match with data_matrix
+                    self.goal_point = (int(touch.x), int(self.height-(touch.y-self.height))) #so it would later match with data_matrix
                 touch.ud['line'] = Line(points=[touch.x, touch.y], width=5)
 
     def on_touch_move(self, touch):
@@ -90,19 +90,22 @@ class MainApp(App):
 
     def start(self):
         if hasattr(self.paint, 'starting_point') and hasattr(self.paint, 'goal_point'):
+            self.paint.export_to_png(filename="drw.png")
+            data_matrix = pa.image_to_matrix("drw.png", delete_a_in_rgba=True)
             if self.menu.list_idx == 0:
-                #print(fbo.texture)
-                self.paint.export_to_png(filename="drw.png")
-                data_matrix = pa.image_to_matrix("drw.png", delete_a_in_rgba=True)
                 self.path = pa.dijkstra(data_matrix, self.paint.starting_point, self.paint.goal_point,
                                         diagonal_move=self.menu.diagonal_move)
                 data_matrix = pa.paint_path(data_matrix, self.path)
                 img = IMG.fromarray(data_matrix)
                 img.save("sol.png")
-                #sleep(45)
                 self.paint.paint_solution(img="sol.png")
             else:
-                pass
+                self.path = pa.astar(data_matrix, self.paint.starting_point, self.paint.goal_point,
+                                        diagonal_move=self.menu.diagonal_move)
+                data_matrix = pa.paint_path(data_matrix, self.path)
+                img = IMG.fromarray(data_matrix)
+                img.save("sol.png")
+                self.paint.paint_solution(img="sol.png")
         else:
             print("We dont do that here")
 
