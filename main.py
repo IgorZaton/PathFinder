@@ -1,24 +1,11 @@
-from array import array
-
 from kivy.app import App
-from functools import partial
-
-from kivy.atlas import CoreImage
-from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 from kivy.graphics import Color, Ellipse, Line, Rectangle
-from random import random
 from kivy.properties import ObjectProperty
-from kivy.core.window import Window
 import pathfinding_algorithms as pa
 from PIL import Image as IMG
-from time import sleep
-import os
-import kivy.clock
-from kivy.cache import Cache
-from kivy.graphics import texture
 
 
 class Menu(Widget):
@@ -30,7 +17,7 @@ class Menu(Widget):
     rubber_button = ObjectProperty(None)
     diagonal_move_btn = ObjectProperty(None)
     diagonal_move = False
-    alg_list = ["Dijkstra"]#, "A*"]
+    alg_list = ["Dijkstra", "A*"]
     list_idx = 0
 
     def __init__(self, **kwargs):
@@ -40,6 +27,7 @@ class Menu(Widget):
 
     def build(self):
         pass
+
 
 class Paint(Widget):
     def __init__(self, **kwargs):
@@ -87,7 +75,6 @@ class MainApp(App):
             delattr(self.paint, 'goal_point')
         self.paint.canvas.clear()
 
-
     def start(self):
         if hasattr(self.paint, 'starting_point') and hasattr(self.paint, 'goal_point'):
             self.paint.export_to_png(filename="drw.png")
@@ -102,13 +89,12 @@ class MainApp(App):
             else:
                 self.path = pa.astar(data_matrix, self.paint.starting_point, self.paint.goal_point,
                                         diagonal_move=self.menu.diagonal_move)
-                data_matrix = pa.paint_path(data_matrix, self.path)
+                data_matrix = pa.paint_astar_path(data_matrix, self.path)
                 img = IMG.fromarray(data_matrix)
                 img.save("sol.png")
                 self.paint.paint_solution(img="sol.png")
         else:
             print("We dont do that here")
-
 
     def wall(self):
         self.paint.color = (0, 0, 1)
